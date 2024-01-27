@@ -65,6 +65,14 @@ let currentSpeed = 0.0;
 const app = express();
 const port = 3000;
 
+app.use(bodyParser.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
 // Replace the following with your PostgreSQL connection details
 const pool = new Pool({
   user: "admin",

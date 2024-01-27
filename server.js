@@ -57,6 +57,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
+const cors = require("cors"); // Add this line
 const fs = require("fs");
 let currentLatitude = 0.0;
 let currentLongitude = 0.0;
@@ -66,12 +67,12 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
-
 app.use(
   cors({
     origin: "*",
   })
 );
+
 
 // Replace the following with your PostgreSQL connection details
 const pool = new Pool({

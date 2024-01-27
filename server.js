@@ -1,4 +1,3 @@
-
 // const express = require('express');
 // const bodyParser = require('body-parser');
 // const { Pool } = require('pg');
@@ -55,10 +54,10 @@
 //   console.log(`Server is running on port ${port}`);
 // });
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const { Pool } = require('pg');
-const fs = require('fs');
+const express = require("express");
+const bodyParser = require("body-parser");
+const { Pool } = require("pg");
+const fs = require("fs");
 let currentLatitude = 0.0;
 let currentLongitude = 0.0;
 let currentSpeed = 0.0;
@@ -68,10 +67,10 @@ const port = 3000;
 
 // Replace the following with your PostgreSQL connection details
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'phvalue', // Change the database name
-  password: 'padmanabh2',
+  user: "admin",
+  host: "192.168.0.112",
+  database: "padmanabh", // Change the database name
+  password: "admin",
   port: 5432, // Default PostgreSQL port
 });
 
@@ -84,46 +83,54 @@ const pool = new Pool({
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
-app.post('/update', async (req, res) => {
+app.post("/update", async (req, res) => {
   const { latitude, longitude, speed } = req.body;
-  console.log(`Received GPS data - Latitude: ${latitude}, Longitude: ${longitude}, Speed: ${speed}`);
+  console.log(
+    `Received GPS data - Latitude: ${latitude}, Longitude: ${longitude}, Speed: ${speed}`
+  );
   currentLatitude = latitude;
   currentLongitude = longitude;
   currentSpeed = speed;
   // Insert GPS data into PostgreSQL database
   try {
     const client = await pool.connect();
-    const result = await client.query('INSERT INTO gps_data (latitude, longitude, speed) VALUES ($1, $2, $3)', [latitude, longitude, speed]);
-    console.log('GPS data inserted into database');
+    const result = await client.query(
+      "INSERT INTO gps_data (latitude, longitude, speed) VALUES ($1, $2, $3)",
+      [latitude, longitude, speed]
+    );
+    console.log("GPS data inserted into database");
     client.release();
   } catch (error) {
-    console.error('Error inserting GPS data into database', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error inserting GPS data into database", error);
+    res.status(500).json({ error: "Internal server error" });
     return;
   }
 
   res.sendStatus(200);
 });
 
-
-app.get('/getGPS', async (req, res) => {
+app.get("/getGPS", async (req, res) => {
   if (currentLatitude !== 0.0 && currentLongitude !== 0.0) {
-    res.header('Content-Type', 'application/json');
-    res.status(200).json({ latitude: currentLatitude, longitude: currentLongitude, speed: currentSpeed });
+    res.header("Content-Type", "application/json");
+    res
+      .status(200)
+      .json({
+        latitude: currentLatitude,
+        longitude: currentLongitude,
+        speed: currentSpeed,
+      });
   } else {
-    res.status(404).json({ error: 'GPS data not available' });
+    res.status(404).json({ error: "GPS data not available" });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
 
 // const { Client } = require('pg');
 // const fs = require('fs');
@@ -171,8 +178,3 @@ app.listen(port, () => {
 
 // // Call the function to insert dummy data
 // insertDummyData();
-
-
-
-
-
